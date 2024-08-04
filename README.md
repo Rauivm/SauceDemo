@@ -1,7 +1,9 @@
 # SauceDemo com RobotFramework
 
 Automação de Testes com Robotframework: Utilizar Robotframework para criar e executar testes automatizado
-Controle de Versão com Git: Utilizar Git para versionar o código e enviar as soluções.
+
+    Controle de Versão com Git: Utilizar Git para versionar o código e enviar as soluções.
+
 Metodologia Ágil: Demonstrar entendimento de práticas ágeis aplicando técnicas de BDD.
 
 Criação de Testes Automatizados
@@ -20,4 +22,4 @@ Para instalar as dependências do projeto, execute:
 
 ```bash
 pip install -r requirements.txt
-robot -d .\\logs  tests\\bdd_cases.robot
+robot -d ./logs  tests/bdd_cases.robot
