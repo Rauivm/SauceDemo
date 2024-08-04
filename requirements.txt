@@ -1,4 +1,4 @@
 Python==3.12.4
-Robot==Framework 7.0.1
+robotframework==7.0.1
 robotframework-faker==5.0.0
 robotframework-seleniumlibrary==6.3.0
