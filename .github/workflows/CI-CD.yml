@@ -37,4 +37,4 @@ jobs:
           pip install -r requirements.txt
       # Runs BDD tests
       - name: Run BDD tests
-        run: robot -d .\logs ..\tests\bdd_cases.robot
+        run: robot --outputdir results tests/bdd_cases.robot
