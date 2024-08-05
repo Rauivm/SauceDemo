@@ -6,22 +6,13 @@ pipeline {
     }
 
     parameters {
-        string(name: 'CHROMEDRIVER_VERSION', defaultValue: '127.0.6533.88', description: 'Version of ChromeDriver to use')
-        booleanParam(name: 'RUN_PARALLEL', defaultValue: false, description: 'Run tests in parallel')
-    }
-
-    options {
-        timeout(time: 1, unit: 'HOURS')
-    }
-
-    triggers {
-        cron('H 2 * * *') // Executa o pipeline todos os dias às 2 da manhã
+        string(name: 'CHROME_VERSION', defaultValue: 'stable', description: 'Version of Chrome to use')
+        string(name: 'CHROMEDRIVER_VERSION', defaultValue: 'canary', description: 'Version of ChromeDriver to use')
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Faz o checkout do repositório
                 git url: 'https://github.com/Rauivm/SauceDemo', branch: 'main'
             }
         }
@@ -36,19 +27,16 @@ pipeline {
                         bat 'pip install -r requirements.txt'
                     }
 
-                    // Baixa e instala o ChromeDriver
-                    def chromedriverUrl = "https://storage.googleapis.com/chrome-for-testing/${params.CHROMEDRIVER_VERSION}/linux64/chromedriver_linux64.zip"
+                    // Instala o Chrome e o ChromeDriver usando @puppeteer/browsers
                     if (isUnix()) {
                         sh """
-                            wget ${chromedriverUrl}
-                            unzip chromedriver_linux64.zip
-                            chmod +x chromedriver
+                            npx @puppeteer/browsers install chrome@${params.CHROME_VERSION}
+                            npx @puppeteer/browsers install chromedriver@${params.CHROMEDRIVER_VERSION}
                         """
                     } else {
                         bat """
-                            curl -LO ${chromedriverUrl}
-                            powershell -Command "Expand-Archive chromedriver_linux64.zip"
-                            icacls chromedriver /grant Everyone:(RX)
+                            npx @puppeteer/browsers install chrome@${params.CHROME_VERSION}
+                            npx @puppeteer/browsers install chromedriver@${params.CHROMEDRIVER_VERSION}
                         """
                     }
                 }
@@ -56,19 +44,12 @@ pipeline {
         }
 
         stage('Run Tests') {
-            parallel {
-                stage('Run BDD Tests') {
-                    when {
-                        expression { return params.RUN_PARALLEL }
-                    }
-                    steps {
-                        script {
-                            if (isUnix()) {
-                                sh 'robot -d ${ROBOT_REPORTS_DIR} -v BROWSER:chrome -v OPTIONS:"--headless --no-sandbox --disable-dev-shm-usage" tests/bdd_cases.robot'
-                            } else {
-                                bat 'robot -d ${ROBOT_REPORTS_DIR} -v BROWSER:chrome -v OPTIONS:"--headless --no-sandbox --disable-dev-shm-usage" tests\\bdd_cases.robot'
-                            }
-                        }
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'robot -d ${ROBOT_REPORTS_DIR} -v BROWSER:chrome -v OPTIONS:"--headless --no-sandbox --disable-dev-shm-usage" tests/bdd_cases.robot'
+                    } else {
+                        bat 'robot -d ${ROBOT_REPORTS_DIR} -v BROWSER:chrome -v OPTIONS:"--headless --no-sandbox --disable-dev-shm-usage" tests\\bdd_cases.robot'
                     }
                 }
             }
@@ -77,7 +58,6 @@ pipeline {
 
     post {
         always {
-            // Publica os relatórios do Robot Framework
             publishHTML([target: [
                 allowMissing: false,
                 alwaysLinkToLastBuild: true,
