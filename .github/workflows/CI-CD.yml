@@ -31,14 +31,6 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y google-chrome-stable
 
-    - name: Download and install specific ChromeDriver
-      run: |
-        CHROMEDRIVER_URL="https://storage.googleapis.com/chrome-for-testing-public/127.0.6533.88/linux64/chromedriver_linux64.zip"
-        echo "Downloading Chromedriver from: ${CHROMEDRIVER_URL}"
-        wget $CHROMEDRIVER_URL
-        unzip chromedriver_linux64.zip
-        chmod +x chromedriver
-
     - name: Run tests
       run: |
         robot -d ./logs -v BROWSER:chrome -v OPTIONS:"--headless --no-sandbox --disable-dev-shm-usage" tests/bdd_cases.robot
