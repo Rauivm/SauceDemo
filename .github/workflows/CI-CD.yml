@@ -23,10 +23,16 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Install Chrome
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+        sudo apt-get install -y chromedriver
+
     - name: Run tests
       run: |
         mkdir -p logs
-        robot -d ./logs tests/bdd_cases.robot
+        robot -d ./logs -v BROWSER:chrome -v OPTIONS:"--headless --no-sandbox --disable-dev-shm-usage" tests/bdd_cases.robot
 
     - name: Upload Robot Framework reports
       uses: actions/upload-artifact@v2
