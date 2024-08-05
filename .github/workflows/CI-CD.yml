@@ -30,12 +30,11 @@ jobs:
 
     - name: Download and install ChromeDriver
       run: |
-        CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
-        CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/114.0.5735.90")
-        wget https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
+        VERSION=$(curl -s https://googlechromelabs.github.io/chrome-for-testing/ | grep -oP '(?<=Chromedriver: )\d+\.\d+\.\d+')
+        CHROMEDRIVER_URL="https://chromedriver.storage.googleapis.com/${VERSION}/chromedriver_linux64.zip"
+        wget $CHROMEDRIVER_URL
         unzip chromedriver_linux64.zip
-        sudo mv chromedriver /usr/local/bin/
-        sudo chmod +x /usr/local/bin/chromedriver
+        chmod +x chromedriver
 
     - name: Run tests
       run: |
