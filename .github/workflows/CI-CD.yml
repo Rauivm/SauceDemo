@@ -39,13 +39,9 @@ jobs:
         echo "VERSION=${VERSION}" >> $GITHUB_ENV
         echo "Version fetched: ${VERSION}"
 
-    - name: Download and install ChromeDriver
+    - name: Download and install specific ChromeDriver
       run: |
-        if [ -z "${{ env.VERSION }}" ]; then
-          echo "Failed to fetch ChromeDriver version."
-          exit 1
-        fi
-        CHROMEDRIVER_URL="https://chromedriver.storage.googleapis.com/${{ env.VERSION }}/chromedriver_linux64.zip"
+        CHROMEDRIVER_URL="https://storage.googleapis.com/chrome-for-testing-public/127.0.6533.88/linux64/chromedriver_linux64.zip"
         echo "Downloading Chromedriver from: ${CHROMEDRIVER_URL}"
         wget $CHROMEDRIVER_URL
         unzip chromedriver_linux64.zip
