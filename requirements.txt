@@ -2,3 +2,4 @@
 robotframework==7.0.1
 robotframework-faker==5.0.0
 robotframework-seleniumlibrary==6.3.0
+setuptools
