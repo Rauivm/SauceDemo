@@ -32,7 +32,7 @@ jobs:
 
     - name: Run Robot Framework tests
       run: |
-        robot -d ./logs --variable browser:chrome tests/bdd_cases.robot
+        robot -d ./logs --variable browser:headlesschrome tests/bdd_cases.robot
         
 
     - name: Upload Robot Framework reports
