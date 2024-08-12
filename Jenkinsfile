@@ -1,27 +1,26 @@
 pipeline {
     agent any
+
     environment {
-        PYTHON_PATH = 'C:\\Users\\rauiv\\AppData\\Local\\Programs\\Python\\Python312'
+        PYTHON_PATH = 'C:\\Path\\To\\Python'
         PIP_PATH = "${env.PYTHON_PATH}\\Scripts"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Clonar o repositório
                 git 'https://github.com/Rauivm/SauceDemo.git'
             }
         }
-       // stage('Install Dependencies') {
-       //     steps {
-                // Instalar dependências
-       //         bat 'pip install -r requirements.txt'
-       //     }
+        //stage('Install Dependencies') {
+        //    steps {
+                // Usar o caminho absoluto para o pip
+        //        bat '"${env.PIP_PATH}\\pip.exe" install -r requirements.txt'
+        //    }
         }
         stage('Run Tests') {
             steps {
-                // Executar os testes do Robot Framework
-                bat 'robot --outputdir results --variable browser:headlesschrome tests/bdd_cases.robot'
+                bat '"${env.PYTHON_PATH}\\Scripts\\robot.exe" --outputdir results --variable browser:headlesschrome tests/bdd_cases.robot'
             }
         }
     }
@@ -30,10 +29,7 @@ pipeline {
         always {
             // Publicar relatórios do Robot Framework
             robot outputPath: 'results'
-        }
-        cleanup {
-            // Limpar arquivos temporários
-            cleanWs()
+            cleanWs() // Limpar arquivos temporários após a execução
         }
     }
 }
