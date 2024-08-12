@@ -12,11 +12,11 @@ pipeline {
                 git 'https://github.com/Rauivm/SauceDemo.git'
             }
         }
-        stage('Install Dependencies') {
-            steps {
+       // stage('Install Dependencies') {
+       //     steps {
                 // Instalar dependências
-                bat 'pip install -r requirements.txt'
-            }
+       //         bat 'pip install -r requirements.txt'
+       //     }
         }
         stage('Run Tests') {
             steps {
