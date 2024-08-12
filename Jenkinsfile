@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    environment {
+        PYTHON_PATH = 'C:\\Users\\rauiv\\AppData\\Local\\Programs\\Python\\Python312'
+        PIP_PATH = "${env.PYTHON_PATH}\\Scripts"
+    }
 
     stages {
         stage('Checkout') {
