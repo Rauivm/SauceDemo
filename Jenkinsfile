@@ -9,7 +9,7 @@ pipeline {
         }
         stage('Run Tests') {
             steps {
-                bat '"${env.PYTHON_PATH}\\Scripts\\robot.exe" --outputdir results --variable browser:headlesschrome tests/bdd_cases.robot'
+                bat 'robot --outputdir results --variable browser:headlesschrome tests/bdd_cases.robot'
             }
         }
     }
