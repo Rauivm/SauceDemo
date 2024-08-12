@@ -11,13 +11,13 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 // Instalar dependências
-                sh 'pip install -r requirements.txt'
+                bat 'pip install -r requirements.txt'
             }
         }
         stage('Run Tests') {
             steps {
                 // Executar os testes do Robot Framework
-                sh 'robot --outputdir results --variable browser:headlesschrome tests/bdd_cases.robot'
+                bat 'robot --outputdir results --variable browser:headlesschrome tests/bdd_cases.robot'
             }
         }
     }
