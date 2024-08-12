@@ -8,8 +8,12 @@ pipeline {
             }
         }
         stage('Run Tests') {
-            steps {
-                bat 'robot --outputdir results --variable browser:headlesschrome tests/bdd_cases.robot'
+            steps {             
+                bat """
+                    cd C:\\robotframework\\saucedemo\\
+                    run.bat
+                    """
+                //bat 'cd C:\\robotframework\\saucedemo\\run.bat'
             }
         }
     }
