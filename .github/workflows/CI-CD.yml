@@ -35,12 +35,13 @@ jobs:
         robot -d ./logs --variable browser:headlesschrome tests/bdd_cases.robot
 
     - name: Upload Robot Framework reports
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: robot-framework-reports
         path: ./logs
 
     - name: Send report to commit
+      if: github.event_name == 'pull_request'
       uses: joonvena/robotframework-reporter-action@v2.4
       with:
         gh_access_token: ${{ secrets.GITHUB_TOKEN }}
