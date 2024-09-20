@@ -2,64 +2,38 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      [ "main" ]
   pull_request:
-    branches: [ "main" ]
-  workflow_dispatch:
+    branches:
+      [ "main" ]
 
 jobs:
-  execute_test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Create .env file
-        run: |
-          echo "GH_ACTIONS_RUNNER=${{ github.run_number }}" >> .env
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-
-      - name: Install Chrome
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
-
-      - name: Install Dependencies
-        run: |
-          pip install -r requirements.txt
-
-      - name: Execute Tests
-        id: execute_test
-        run: |
-          robot -d ./logs --variable browser:headlesschrome tests/bdd_cases.robot
-        continue-on-error: true
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: robot-framework-reports
-          path: ./logs
-
-  generate_report:
-    if: always()
-    needs: [execute_test]
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Download reports
-        uses: actions/download-artifact@v3
-        with:
-          name: robot-framework-reports
-
-      - name: Send report to commit
-        uses: joonvena/robotframework-reporter-action@v2.4
-        with:
-          gh_access_token: ${{ secrets.GITHUB_TOKEN }}
-          sha: ${{ github.sha }}
-          pull_request_id: ${{ github.event.number }}
+    - name: Install Chrome
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+    - name: Run Robot Framework tests
+      run: |
+        robot -d ./logs --variable browser:headlesschrome tests/bdd_cases.robot
+        
+    - name: Upload Robot Framework reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: robot-framework-reports
+        path: ./logs
