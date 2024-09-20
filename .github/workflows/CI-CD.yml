@@ -34,19 +34,15 @@ jobs:
       - name: Execute Tests
         id: execute_test
         run: |
-          robot -d ./SauceDemo/logs --variable browser:headlesschrome SauceDemo/tests/bdd_cases.robot
+          robot -d ./logs --variable browser:headlesschrome tests/bdd_cases.robot
         continue-on-error: true
-
-      - name: List files in logs directory
-        run: |
-          ls -la SauceDemo/logs  # Adicionado para verificação
 
       - name: Upload test results
         uses: actions/upload-artifact@v3
         if: always()
         with:
           name: robot-framework-reports
-          path: SauceDemo/logs
+          path: ./logs
 
   generate_report:
     if: always()
