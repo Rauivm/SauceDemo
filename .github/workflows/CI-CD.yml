@@ -17,7 +17,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v5  # Atualizado para a versão 5
+      uses: actions/setup-python@v5
       with:
         python-version: '3.x'
 
@@ -34,6 +34,12 @@ jobs:
       run: |
         robot -d ./logs --variable browser:headlesschrome tests/bdd_cases.robot
 
+    - name: Upload Robot Framework reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: robot-framework-reports  # Verifique se este é o nome correto
+        path: ./logs  # Caminho onde os logs estão armazenados
+
   generate_report:
     if: always()
     runs-on: ubuntu-latest
@@ -43,9 +49,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download reports
-        uses: actions/download-artifact@v3  # Atualizado para a versão 3
+        uses: actions/download-artifact@v3
         with:
-          name: robot-framework-reports  # Ajustado para o nome correto
+          name: robot-framework-reports  # Certifique-se de que o nome está correto
 
       - name: Send report to commit
         if: github.event_name == 'pull_request'
