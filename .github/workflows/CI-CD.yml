@@ -2,59 +2,62 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
   pull_request:
-    branches:
-      - main
+    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
-  build:
+  execute_test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.x'
+      - name: Create .env file
+        run: |
+          echo "GH_ACTIONS_RUNNER=${{ github.run_number }}" >> .env
 
-    - name: Install Chrome
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y google-chrome-stable
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
-    - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
+      - name: Install Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
 
-    - name: Run Robot Framework tests
-      run: |
-        robot -d ./logs --variable browser:headlesschrome tests/bdd_cases.robot
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
 
-    - name: Upload Robot Framework reports
-      uses: actions/upload-artifact@v3
-      with:
-        name: robot-framework-reports  # Verifique se este é o nome correto
-        path: ./logs  # Caminho onde os logs estão armazenados
+      - name: Execute Tests
+        id: execute_test
+        run: |
+          robot -d ./logs --variable browser:headlesschrome tests/bdd_cases.robot
+        continue-on-error: true
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: robot-framework-reports
+          path: ./logs
 
   generate_report:
     if: always()
+    needs: [execute_test]
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Download reports
         uses: actions/download-artifact@v3
         with:
-          name: robot-framework-reports  # Certifique-se de que o nome está correto
+          name: robot-framework-reports
 
       - name: Send report to commit
-        if: github.event_name == 'pull_request'
         uses: joonvena/robotframework-reporter-action@v2.4
         with:
           gh_access_token: ${{ secrets.GITHUB_TOKEN }}
