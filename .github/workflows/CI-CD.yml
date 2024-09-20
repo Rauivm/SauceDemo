@@ -1,12 +1,12 @@
-name: CI
+name: CI/CD
 
 on:
   push:
     branches:
-      [ "main" ]
+      - main
   pull_request:
     branches:
-      [ "main" ]
+      - main
 
 jobs:
   build:
@@ -17,7 +17,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5  # Atualizado para a versão 5
       with:
         python-version: '3.x'
 
@@ -29,10 +29,21 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
+        pip install robotframework-allure2
 
     - name: Run Robot Framework tests
       run: |
-        robot -d ./logs --variable browser:headlesschrome tests/bdd_cases.robot
+        robot --listener allure_robotframework ./tests/bdd_cases.robot
+
+    - name: Generate Allure Report
+      run: |
+        allure generate ./results -o ./allure-report
+
+    - name: Upload Allure report
+      uses: actions/upload-artifact@v3
+      with:
+        name: allure-report
+        path: ./allure-report
 
     - name: Upload Robot Framework reports
       uses: actions/upload-artifact@v3
